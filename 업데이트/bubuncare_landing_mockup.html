@@ -1,0 +1,251 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.lp{font-family:var(--font-sans);max-width:680px}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:1rem 0;border-bottom:0.5px solid var(--color-border-tertiary);margin-bottom:0}
+.logo{font-size:17px;font-weight:500;color:var(--color-text-primary)}
+.logo span{color:#1D9E75}
+.nav-links{display:flex;gap:16px;font-size:13px;color:var(--color-text-secondary)}
+.btn-primary{background:#1D9E75;color:#fff;border:none;border-radius:var(--border-radius-md);padding:8px 18px;font-size:13px;font-weight:500;cursor:pointer}
+.hero{padding:3rem 0 2rem;border-bottom:0.5px solid var(--color-border-tertiary)}
+.hero-badge{display:inline-block;background:#E1F5EE;color:#085041;font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;margin-bottom:1rem}
+.hero h1{font-size:28px;font-weight:500;line-height:1.35;color:var(--color-text-primary);margin-bottom:1rem}
+.hero h1 em{font-style:normal;color:#1D9E75}
+.hero-sub{font-size:15px;color:var(--color-text-secondary);line-height:1.7;margin-bottom:1.5rem;max-width:500px}
+.hero-cta{display:flex;gap:10px;align-items:center}
+.btn-sec{background:transparent;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:8px 18px;font-size:13px;color:var(--color-text-primary);cursor:pointer}
+.hero-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:2rem}
+.stat-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.875rem;text-align:center}
+.stat-num{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.stat-desc{font-size:11px;color:var(--color-text-secondary);margin-top:3px}
+.section{padding:2rem 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.section-eyebrow{font-size:11px;font-weight:500;letter-spacing:.08em;color:#1D9E75;text-transform:uppercase;margin-bottom:.5rem}
+.section-title{font-size:20px;font-weight:500;color:var(--color-text-primary);margin-bottom:.5rem}
+.section-sub{font-size:14px;color:var(--color-text-secondary);line-height:1.7;margin-bottom:1.5rem}
+.feature-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.feat-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem}
+.feat-icon{width:32px;height:32px;border-radius:var(--border-radius-md);display:flex;align-items:center;justify-content:center;margin-bottom:.75rem;font-size:16px}
+.feat-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.feat-desc{font-size:12px;color:var(--color-text-secondary);line-height:1.6}
+.how-steps{display:flex;flex-direction:column;gap:0}
+.step{display:flex;gap:16px;padding:1rem 0;border-bottom:0.5px solid var(--color-border-tertiary)}
+.step:last-child{border-bottom:none}
+.step-num{width:28px;height:28px;border-radius:50%;background:#E1F5EE;color:#085041;font-size:12px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.step-title{font-size:14px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+.step-desc{font-size:13px;color:var(--color-text-secondary);line-height:1.6}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.price-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem}
+.price-card.featured{border:2px solid #1D9E75}
+.price-badge{background:#E1F5EE;color:#085041;font-size:11px;font-weight:500;padding:2px 8px;border-radius:20px;display:inline-block;margin-bottom:.75rem}
+.price-tier{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:.25rem}
+.price-amount{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.price-unit{font-size:12px;color:var(--color-text-secondary)}
+.price-visits{font-size:12px;color:var(--color-text-secondary);margin:.5rem 0 .75rem}
+.price-items{display:flex;flex-direction:column;gap:4px}
+.price-item{font-size:12px;color:var(--color-text-secondary);display:flex;align-items:center;gap:5px}
+.check{width:14px;height:14px;border-radius:50%;background:#E1F5EE;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.check svg{width:8px;height:8px}
+.diff-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.diff-card{border-radius:var(--border-radius-lg);padding:1rem}
+.diff-card.us{background:#E1F5EE;border:0.5px solid #9FE1CB}
+.diff-card.them{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary)}
+.diff-label{font-size:11px;font-weight:500;margin-bottom:.5rem}
+.diff-label.us{color:#085041}
+.diff-label.them{color:var(--color-text-tertiary)}
+.diff-item{font-size:12px;line-height:1.7}
+.diff-item.us{color:#0F6E56}
+.diff-item.them{color:var(--color-text-secondary)}
+.cta-section{padding:2rem 0;text-align:center}
+.cta-title{font-size:20px;font-weight:500;color:var(--color-text-primary);margin-bottom:.5rem}
+.cta-sub{font-size:14px;color:var(--color-text-secondary);margin-bottom:1.5rem}
+.cta-btns{display:flex;gap:10px;justify-content:center}
+</style>
+
+<div class="lp">
+
+<nav class="nav">
+  <div class="logo">bubun<span>care</span></div>
+  <div class="nav-links">
+    <span>서비스 소개</span>
+    <span>이용 방법</span>
+    <span>요금제</span>
+    <span>로그인</span>
+  </div>
+  <button class="btn-primary">무료로 시작하기</button>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge">부모님 건강 관리의 새로운 기준</div>
+  <h1>부모님 약·병원 정보를<br><em>자녀가 직접 관리</em>하세요</h1>
+  <p class="hero-sub">여러 병원, 복잡한 복약 일정 — 이제 한 곳에서 정리됩니다. 방문 케어 매니저가 현장에서 확인하고, 자녀에게 리포트로 전달합니다.</p>
+  <div class="hero-cta">
+    <button class="btn-primary">지금 시작하기 →</button>
+    <button class="btn-sec">서비스 둘러보기</button>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-card">
+      <div class="stat-num">6종</div>
+      <div class="stat-desc">평균 복용 약 수</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">3곳</div>
+      <div class="stat-desc">평균 다니는 병원</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">83%</div>
+      <div class="stat-desc">60세 이상 매일 복약</div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-eyebrow">핵심 기능</div>
+  <div class="section-title">부모님 건강을 데이터로 관리합니다</div>
+  <div class="section-sub">약 이름만 알아서는 부족합니다. 어느 병원에서, 무슨 병으로, 어떻게 먹는지까지 한눈에.</div>
+  <div class="feature-grid">
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#E1F5EE">
+        <svg viewBox="0 0 16 16" fill="none" width="16" height="16"><rect x="2" y="2" width="12" height="12" rx="3" stroke="#1D9E75" stroke-width="1.2"/><path d="M8 5v6M5 8h6" stroke="#1D9E75" stroke-width="1.2" stroke-linecap="round"/></svg>
+      </div>
+      <div class="feat-title">병원 카드 등록</div>
+      <div class="feat-desc">병원명·진료과·담당의·주요 병명·다음 예약일을 카드로 관리. D-day 배지 자동 표시.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#E6F1FB">
+        <svg viewBox="0 0 16 16" fill="none" width="16" height="16"><circle cx="8" cy="8" r="5" stroke="#378ADD" stroke-width="1.2"/><path d="M8 5.5v3l2 1.5" stroke="#378ADD" stroke-width="1.2" stroke-linecap="round"/></svg>
+      </div>
+      <div class="feat-title">복약 마스터 관리</div>
+      <div class="feat-desc">약 이름·용량·복용 시간·식전후·주의메모를 병원별로 연결해 등록.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#FAEEDA">
+        <svg viewBox="0 0 16 16" fill="none" width="16" height="16"><path d="M3 4h10M3 8h7M3 12h5" stroke="#BA7517" stroke-width="1.2" stroke-linecap="round"/></svg>
+      </div>
+      <div class="feat-title">자녀 리포트</div>
+      <div class="feat-desc">방문 후 자동 생성. 복약 누락·약 잔량 부족·예약일 임박 즉시 알림.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#FCEBEB">
+        <svg viewBox="0 0 16 16" fill="none" width="16" height="16"><path d="M8 2l1.5 3.5L13 6l-2.5 2.5.5 3.5L8 10.5 5 12l.5-3.5L3 6l3.5-.5L8 2z" stroke="#E24B4A" stroke-width="1.2" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="feat-title">이상징후 알림</div>
+      <div class="feat-desc">복약 2회 연속 누락·잔량 7일 이하·예약일 3일 전 자녀에게 즉시 푸시.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#EEEDFE">
+        <svg viewBox="0 0 16 16" fill="none" width="16" height="16"><circle cx="6" cy="6" r="3" stroke="#7F77DD" stroke-width="1.2"/><circle cx="11" cy="10" r="2" stroke="#7F77DD" stroke-width="1.2"/><path d="M8.5 7.5l1 1" stroke="#7F77DD" stroke-width="1.2" stroke-linecap="round"/></svg>
+      </div>
+      <div class="feat-title">케어파트너 연동</div>
+      <div class="feat-desc">방문 매니저가 현장에서 직접 체크. 노인이 스마트폰을 못 써도 됩니다.</div>
+    </div>
+    <div class="feat-card">
+      <div class="feat-icon" style="background:#E1F5EE">
+        <svg viewBox="0 0 16 16" fill="none" width="16" height="16"><rect x="2" y="3" width="12" height="10" rx="2" stroke="#1D9E75" stroke-width="1.2"/><path d="M5 7h6M5 10h4" stroke="#1D9E75" stroke-width="1.2" stroke-linecap="round"/></svg>
+      </div>
+      <div class="feat-title">생활데이터 기록</div>
+      <div class="feat-desc">신체·식사·위생·정서 10개 카테고리 체크리스트 → 월간 트렌드 시각화.</div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-eyebrow">이용 방법</div>
+  <div class="section-title">3단계로 시작합니다</div>
+  <div class="how-steps">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title">부모님 프로필 생성</div>
+        <div class="step-desc">자녀가 앱에서 부모님 기본 정보를 등록합니다. 5분이면 충분합니다.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title">병원 카드 + 복약 정보 등록</div>
+        <div class="step-desc">다니는 병원, 병명, 복용 중인 약을 병원별로 연결해 등록합니다. 주의 메모까지 기록하면 케어파트너가 현장에서 정확히 확인합니다.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-title">케어파트너 방문 + 리포트 수신</div>
+        <div class="step-desc">주 2~3회 방문 후 자동 리포트 수신. 이상징후 발생 시 즉시 알림으로 연락됩니다.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-eyebrow">차별점</div>
+  <div class="section-title">기존 앱과 무엇이 다른가요</div>
+  <div class="section-sub" style="margin-bottom:1rem">해외 경쟁 서비스(Medisafe, CareZone)는 모두 노인이 직접 앱을 써야 합니다.</div>
+  <div class="diff-grid">
+    <div class="diff-card us">
+      <div class="diff-label us">bubuncare</div>
+      <div class="diff-item us">케어파트너가 현장 직접 확인</div>
+      <div class="diff-item us">노인 앱 불필요</div>
+      <div class="diff-item us">병원↔약 연결 관리</div>
+      <div class="diff-item us">방문케어 + 데이터 통합</div>
+      <div class="diff-item us">자녀가 모든 것을 등록·관리</div>
+    </div>
+    <div class="diff-card them">
+      <div class="diff-label them">기존 앱들</div>
+      <div class="diff-item them">노인 본인이 직접 체크</div>
+      <div class="diff-item them">스마트폰 사용 필수</div>
+      <div class="diff-item them">약 단독 관리</div>
+      <div class="diff-item them">앱 알림만 제공</div>
+      <div class="diff-item them">방문케어 연동 없음</div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-eyebrow">요금제</div>
+  <div class="section-title">합리적인 구독 플랜</div>
+  <div class="section-sub">모든 플랜에 복약·병원 관리, 자녀 리포트, 이상징후 알림이 포함됩니다.</div>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="price-tier">Basic</div>
+      <div class="price-amount">150,000<span class="price-unit">원/월</span></div>
+      <div class="price-visits">월 8회 방문</div>
+      <div class="price-items">
+        <div class="price-item"><div class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#1D9E75" stroke-width="1.2" stroke-linecap="round"/></svg></div>복약·병원 관리</div>
+        <div class="price-item"><div class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#1D9E75" stroke-width="1.2" stroke-linecap="round"/></svg></div>자녀 리포트</div>
+        <div class="price-item"><div class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#1D9E75" stroke-width="1.2" stroke-linecap="round"/></svg></div>이상징후 알림</div>
+      </div>
+    </div>
+    <div class="price-card featured">
+      <div class="price-badge">추천</div>
+      <div class="price-tier">Standard</div>
+      <div class="price-amount">200,000<span class="price-unit">원/월</span></div>
+      <div class="price-visits">월 12회 방문</div>
+      <div class="price-items">
+        <div class="price-item"><div class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#1D9E75" stroke-width="1.2" stroke-linecap="round"/></svg></div>Basic 전체 포함</div>
+        <div class="price-item"><div class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#1D9E75" stroke-width="1.2" stroke-linecap="round"/></svg></div>월간 트렌드 리포트</div>
+        <div class="price-item"><div class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#1D9E75" stroke-width="1.2" stroke-linecap="round"/></svg></div>바이탈 측정 포함</div>
+      </div>
+    </div>
+    <div class="price-card">
+      <div class="price-tier">Premium</div>
+      <div class="price-amount">250,000<span class="price-unit">원/월</span></div>
+      <div class="price-visits">월 16회 방문</div>
+      <div class="price-items">
+        <div class="price-item"><div class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#1D9E75" stroke-width="1.2" stroke-linecap="round"/></svg></div>Standard 전체 포함</div>
+        <div class="price-item"><div class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#1D9E75" stroke-width="1.2" stroke-linecap="round"/></svg></div>병원 동행 서비스</div>
+        <div class="price-item"><div class="check"><svg viewBox="0 0 8 8" fill="none"><path d="M1.5 4l2 2 3-3" stroke="#1D9E75" stroke-width="1.2" stroke-linecap="round"/></svg></div>전담 케어파트너</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-section">
+  <div class="cta-title">부모님 건강, 이제 데이터로 관리하세요</div>
+  <div class="cta-sub">복약·병원 정보 등록은 무료입니다. 지금 바로 시작해 보세요.</div>
+  <div class="cta-btns">
+    <button class="btn-primary">무료로 시작하기 →</button>
+    <button class="btn-sec">케어파트너 신청</button>
+  </div>
+</div>
+
+</div>

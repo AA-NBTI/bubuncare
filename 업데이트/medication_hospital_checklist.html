@@ -1,0 +1,273 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.page{padding:1.5rem 0}
+.section-label{font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--color-text-tertiary);text-transform:uppercase;margin-bottom:.75rem}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem;margin-bottom:.75rem}
+.card-header{display:flex;align-items:center;gap:10px;margin-bottom:.75rem}
+.hospital-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.card-title{font-size:15px;font-weight:500;color:var(--color-text-primary)}
+.card-sub{font-size:12px;color:var(--color-text-secondary);margin-top:2px}
+.badge{display:inline-block;font-size:11px;font-weight:500;padding:2px 8px;border-radius:4px}
+.badge-blue{background:#E6F1FB;color:#0C447C}
+.badge-teal{background:#E1F5EE;color:#085041}
+.badge-amber{background:#FAEEDA;color:#633806}
+.badge-red{background:#FCEBEB;color:#791F1F}
+.divider{border:none;border-top:0.5px solid var(--color-border-tertiary);margin:.75rem 0}
+.row{display:flex;justify-content:space-between;align-items:center;padding:5px 0}
+.row-label{font-size:13px;color:var(--color-text-secondary)}
+.row-val{font-size:13px;font-weight:500;color:var(--color-text-primary)}
+.timing-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:.5rem}
+.timing-cell{border-radius:var(--border-radius-md);padding:8px 4px;text-align:center;border:0.5px solid var(--color-border-tertiary)}
+.timing-cell.on{background:var(--color-background-success);border-color:var(--color-border-success)}
+.timing-cell.off{background:var(--color-background-secondary);border-color:var(--color-border-tertiary)}
+.timing-label{font-size:11px;color:var(--color-text-secondary)}
+.timing-val{font-size:12px;font-weight:500;margin-top:2px}
+.timing-cell.on .timing-label{color:var(--color-text-success)}
+.timing-cell.on .timing-val{color:var(--color-text-success)}
+.timing-cell.off .timing-val{color:var(--color-text-tertiary)}
+.med-list{display:flex;flex-direction:column;gap:8px}
+.med-item{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem 1rem}
+.med-name-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.med-name{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.med-dosage{font-size:12px;color:var(--color-text-secondary)}
+.pills-row{display:flex;gap:4px;flex-wrap:wrap}
+.pill{font-size:11px;padding:2px 7px;border-radius:20px;font-weight:500}
+.pill-on{background:#E1F5EE;color:#085041}
+.pill-off{background:var(--color-background-secondary);color:var(--color-text-tertiary);border:0.5px solid var(--color-border-tertiary)}
+.symptom-tag{font-size:11px;padding:2px 8px;border-radius:20px;background:#EEF3FF;color:#0C447C;font-weight:500}
+.note-box{background:var(--color-background-warning);border-left:2px solid var(--color-border-warning);border-radius:0;padding:.5rem .75rem;font-size:12px;color:var(--color-text-warning);margin-top:.5rem}
+.summary-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem}
+.summary-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.75rem;text-align:center}
+.summary-num{font-size:22px;font-weight:500;color:var(--color-text-primary)}
+.summary-desc{font-size:11px;color:var(--color-text-secondary);margin-top:2px}
+.hospital-legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:1rem}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--color-text-secondary)}
+</style>
+
+<div class="page">
+
+<div class="summary-grid">
+  <div class="summary-card">
+    <div class="summary-num">3</div>
+    <div class="summary-desc">등록 병원</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-num">6</div>
+    <div class="summary-desc">복용 중인 약</div>
+  </div>
+  <div class="summary-card">
+    <div class="summary-num">11</div>
+    <div class="summary-desc">일일 복용 횟수</div>
+  </div>
+</div>
+
+<div class="section-label">병원 — 진료과 연결</div>
+<div class="hospital-legend">
+  <div class="legend-item"><div class="hospital-dot" style="background:#378ADD"></div>부산성모병원 · 내과</div>
+  <div class="legend-item"><div class="hospital-dot" style="background:#1D9E75"></div>해운대백병원 · 정형외과</div>
+  <div class="legend-item"><div class="hospital-dot" style="background:#D85A30"></div>동네의원 · 이비인후과</div>
+</div>
+
+<div class="section-label">병원 카드</div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="hospital-dot" style="background:#378ADD"></div>
+    <div>
+      <div class="card-title">부산성모병원 · 내과</div>
+      <div class="card-sub">김○○ 원장 · 매월 2째주 화요일</div>
+    </div>
+    <span class="badge badge-blue" style="margin-left:auto">D-8</span>
+  </div>
+  <hr class="divider">
+  <div class="row"><span class="row-label">주요 증상·병명</span><span class="row-val">고혈압, 당뇨 2형</span></div>
+  <div class="row"><span class="row-label">다음 예약일</span><span class="row-val">2026.04.18</span></div>
+  <div class="row"><span class="row-label">처방약 수</span><span class="row-val">3종</span></div>
+  <div class="row"><span class="row-label">공복 측정 필요</span><span class="row-val">혈당 · 혈압</span></div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="hospital-dot" style="background:#1D9E75"></div>
+    <div>
+      <div class="card-title">해운대백병원 · 정형외과</div>
+      <div class="card-sub">이○○ 원장 · 격주 목요일</div>
+    </div>
+    <span class="badge badge-teal" style="margin-left:auto">D-3</span>
+  </div>
+  <hr class="divider">
+  <div class="row"><span class="row-label">주요 증상·병명</span><span class="row-val">무릎 퇴행성 관절염</span></div>
+  <div class="row"><span class="row-label">다음 예약일</span><span class="row-val">2026.04.13</span></div>
+  <div class="row"><span class="row-label">처방약 수</span><span class="row-val">2종</span></div>
+  <div class="row"><span class="row-label">특이사항</span><span class="row-val">X-ray 재촬영 예정</span></div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <div class="hospital-dot" style="background:#D85A30"></div>
+    <div>
+      <div class="card-title">동네의원 · 이비인후과</div>
+      <div class="card-sub">박○○ 원장 · 필요시 방문</div>
+    </div>
+    <span class="badge badge-amber" style="margin-left:auto">상시</span>
+  </div>
+  <hr class="divider">
+  <div class="row"><span class="row-label">주요 증상·병명</span><span class="row-val">만성 비염, 계절성 알레르기</span></div>
+  <div class="row"><span class="row-label">처방약 수</span><span class="row-val">1종</span></div>
+  <div class="row"><span class="row-label">복용 조건</span><span class="row-val">증상 심할 때만</span></div>
+</div>
+
+<div class="section-label" style="margin-top:1.25rem">복약 마스터 — 약별 상세</div>
+
+<div class="med-list">
+
+  <div class="med-item">
+    <div class="med-name-row">
+      <div>
+        <span class="med-name">암로디핀 5mg</span>
+        <span class="med-dosage"> · 1정</span>
+      </div>
+      <div style="display:flex;gap:4px">
+        <span class="symptom-tag">고혈압</span>
+        <div class="hospital-dot" style="background:#378ADD;margin-top:3px"></div>
+      </div>
+    </div>
+    <div class="pills-row">
+      <span class="pill pill-on">아침</span>
+      <span class="pill pill-off">점심</span>
+      <span class="pill pill-off">저녁</span>
+      <span class="pill pill-off">취침</span>
+      <span class="pill pill-on">식후 30분</span>
+    </div>
+  </div>
+
+  <div class="med-item">
+    <div class="med-name-row">
+      <div>
+        <span class="med-name">메트포르민 500mg</span>
+        <span class="med-dosage"> · 1정</span>
+      </div>
+      <div style="display:flex;gap:4px">
+        <span class="symptom-tag">당뇨</span>
+        <div class="hospital-dot" style="background:#378ADD;margin-top:3px"></div>
+      </div>
+    </div>
+    <div class="pills-row">
+      <span class="pill pill-on">아침</span>
+      <span class="pill pill-on">점심</span>
+      <span class="pill pill-on">저녁</span>
+      <span class="pill pill-off">취침</span>
+      <span class="pill pill-on">식사 중</span>
+    </div>
+    <div class="note-box">공복 복용 시 속쓰림 — 반드시 식사 중 복용</div>
+  </div>
+
+  <div class="med-item">
+    <div class="med-name-row">
+      <div>
+        <span class="med-name">아토르바스타틴 10mg</span>
+        <span class="med-dosage"> · 1정</span>
+      </div>
+      <div style="display:flex;gap:4px">
+        <span class="symptom-tag">고지혈증</span>
+        <div class="hospital-dot" style="background:#378ADD;margin-top:3px"></div>
+      </div>
+    </div>
+    <div class="pills-row">
+      <span class="pill pill-off">아침</span>
+      <span class="pill pill-off">점심</span>
+      <span class="pill pill-on">저녁</span>
+      <span class="pill pill-off">취침</span>
+      <span class="pill pill-on">식후</span>
+    </div>
+  </div>
+
+  <div class="med-item">
+    <div class="med-name-row">
+      <div>
+        <span class="med-name">셀레콕시브 200mg</span>
+        <span class="med-dosage"> · 1캡슐</span>
+      </div>
+      <div style="display:flex;gap:4px">
+        <span class="symptom-tag">관절염</span>
+        <div class="hospital-dot" style="background:#1D9E75;margin-top:3px"></div>
+      </div>
+    </div>
+    <div class="pills-row">
+      <span class="pill pill-on">아침</span>
+      <span class="pill pill-off">점심</span>
+      <span class="pill pill-on">저녁</span>
+      <span class="pill pill-off">취침</span>
+      <span class="pill pill-on">식후</span>
+    </div>
+    <div class="note-box">위장 약한 경우 위장보호제 병용 — 담당의 확인 필요</div>
+  </div>
+
+  <div class="med-item">
+    <div class="med-name-row">
+      <div>
+        <span class="med-name">글루코사민 1500mg</span>
+        <span class="med-dosage"> · 1정</span>
+      </div>
+      <div style="display:flex;gap:4px">
+        <span class="symptom-tag">관절 보조</span>
+        <div class="hospital-dot" style="background:#1D9E75;margin-top:3px"></div>
+      </div>
+    </div>
+    <div class="pills-row">
+      <span class="pill pill-on">아침</span>
+      <span class="pill pill-off">점심</span>
+      <span class="pill pill-off">저녁</span>
+      <span class="pill pill-off">취침</span>
+      <span class="pill pill-on">식후</span>
+    </div>
+  </div>
+
+  <div class="med-item">
+    <div class="med-name-row">
+      <div>
+        <span class="med-name">세티리진 10mg</span>
+        <span class="med-dosage"> · 1정</span>
+      </div>
+      <div style="display:flex;gap:4px">
+        <span class="symptom-tag">비염·알레르기</span>
+        <div class="hospital-dot" style="background:#D85A30;margin-top:3px"></div>
+      </div>
+    </div>
+    <div class="pills-row">
+      <span class="pill pill-off">아침</span>
+      <span class="pill pill-off">점심</span>
+      <span class="pill pill-off">저녁</span>
+      <span class="pill pill-on">취침 전</span>
+      <span class="pill pill-on">증상시만</span>
+    </div>
+    <div class="note-box">졸음 유발 — 취침 전 복용 원칙</div>
+  </div>
+
+</div>
+
+<div class="section-label" style="margin-top:1.25rem">오늘 복용 일정 요약</div>
+<div class="card">
+  <div class="timing-grid">
+    <div class="timing-cell on">
+      <div class="timing-label">아침</div>
+      <div class="timing-val">4종</div>
+    </div>
+    <div class="timing-cell on">
+      <div class="timing-label">점심</div>
+      <div class="timing-val">1종</div>
+    </div>
+    <div class="timing-cell on">
+      <div class="timing-label">저녁</div>
+      <div class="timing-val">3종</div>
+    </div>
+    <div class="timing-cell on">
+      <div class="timing-label">취침 전</div>
+      <div class="timing-val">1종</div>
+    </div>
+  </div>
+</div>
+
+</div>
