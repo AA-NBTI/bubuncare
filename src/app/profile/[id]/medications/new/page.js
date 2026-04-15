@@ -118,23 +118,28 @@ export default function NewMedication() {
       setOcrState('done');
 
       // 파싱 결과를 폼에 자동 입력
-      const parsed = parseMedicationText(text);
-      setFormData(prev => ({
-        ...prev,
-        drug_name: parsed.drug_name || prev.drug_name,
-        dosage: parsed.dosage || prev.dosage,
-        morning: parsed.morning,
-        afternoon: parsed.afternoon,
-        evening: parsed.evening,
-        bedtime: parsed.bedtime,
-        caution_memo: parsed.caution_memo || prev.caution_memo,
-        symptom_tag: parsed.symptom_tag || prev.symptom_tag,
-      }));
+      applyParsedResults(text);
 
     } catch (err) {
       console.error(err);
       setOcrState('error');
     }
+  };
+
+  // 분석 결과 적용 로직 (재사용 가능하게 분리)
+  const applyParsedResults = (text) => {
+    const parsed = parseMedicationText(text);
+    setFormData(prev => ({
+      ...prev,
+      drug_name: parsed.drug_name || prev.drug_name,
+      dosage: parsed.dosage || prev.dosage,
+      morning: parsed.morning,
+      afternoon: parsed.afternoon,
+      evening: parsed.evening,
+      bedtime: parsed.bedtime,
+      caution_memo: parsed.caution_memo || prev.caution_memo,
+      symptom_tag: parsed.symptom_tag || prev.symptom_tag,
+    }));
   };
 
   const resetOcr = () => {
@@ -147,7 +152,18 @@ export default function NewMedication() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const submissionData = { ...formData, profile_id: profileId };
+    
+    // 인식된 텍스트가 있다면 메모에 기록으로 남김
+    const finalMemo = ocrText 
+      ? `[OCR 인식 기록]: ${ocrText.substring(0, 100)}${ocrText.length > 100 ? '...' : ''}\n${formData.caution_memo}`
+      : formData.caution_memo;
+
+    const submissionData = { 
+      ...formData, 
+      caution_memo: finalMemo,
+      profile_id: profileId 
+    };
+    
     if (formData.purchase_type !== 'hospital') delete submissionData.hospital_id;
     const { error } = await supabase.from('medications').insert([submissionData]);
     if (error) alert('저장 실패: ' + error.message);
@@ -233,16 +249,25 @@ export default function NewMedication() {
               <div style={{ flex: 1 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
                   <CheckCircle size={16} color="#1D9E75" />
-                  <span style={{ fontSize: '14px', fontWeight: '800', color: '#1D9E75' }}>스캔 완료 — 아래 내용이 자동 입력됐습니다</span>
+                  <span style={{ fontSize: '14px', fontWeight: '800', color: '#1D9E75' }}>스캔 완료 — 결과가 다르다면 아래 텍스트를 직접 수정해보세요</span>
                 </div>
-                <div style={{ fontSize: '12px', color: '#555', background: '#fff', borderRadius: '8px', padding: '10px', maxHeight: '80px', overflowY: 'auto', lineHeight: '1.5', whiteSpace: 'pre-wrap' }}>
-                  {ocrText || '텍스트를 인식하지 못했습니다.'}
-                </div>
+                <textarea 
+                  value={ocrText}
+                  onChange={(e) => setOcrText(e.target.value)}
+                  style={{ 
+                    width: '100%', minHeight: '100px', padding: '12px', borderRadius: '12px', 
+                    border: '1.5px solid #c8e6da', fontSize: '13px', color: '#333', 
+                    lineHeight: '1.6', background: '#fff', outline: 'none', resize: 'vertical'
+                  }}
+                />
               </div>
             </div>
-            <div style={{ padding: '12px 16px', background: '#fff', display: 'flex', justifyContent: 'flex-end' }}>
+            <div style={{ padding: '12px 16px', background: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <button onClick={() => applyParsedResults(ocrText)} style={{ background: '#1D9E75', border: 'none', color: '#fff', borderRadius: '8px', padding: '8px 16px', fontWeight: '800', cursor: 'pointer', fontSize: '13px' }}>
+                 수정된 내용으로 다시 분석
+              </button>
               <button onClick={resetOcr} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: '1px solid #ddd', borderRadius: '8px', padding: '8px 14px', cursor: 'pointer', fontSize: '13px', color: '#666' }}>
-                <X size={14} /> 다시 스캔
+                <X size={14} /> 새로 스캔
               </button>
             </div>
           </div>
