@@ -103,16 +103,25 @@ export default function NewMedication() {
     const url = URL.createObjectURL(file);
     setPreviewUrl(url);
     setOcrState('scanning');
-    setOcrText('');
+    setOcrText('엔진 초기화 중...');
 
     try {
+      // Tesseract.js v7 권장 로직
       const { createWorker } = await import('tesseract.js');
       const worker = await createWorker('kor+eng', 1, {
-        logger: () => {},
+        logger: m => {
+          if (m.status === 'recognizing text') {
+            setOcrText(`글자 분석 중... (${Math.round(m.progress * 100)}%)`);
+          }
+        },
       });
 
       const { data: { text } } = await worker.recognize(file);
       await worker.terminate();
+
+      if (!text || text.trim().length < 5) {
+        throw new Error('인식된 텍스트가 너무 적습니다.');
+      }
 
       setOcrText(text);
       setOcrState('done');
@@ -121,7 +130,7 @@ export default function NewMedication() {
       applyParsedResults(text);
 
     } catch (err) {
-      console.error(err);
+      console.error('OCR Error:', err);
       setOcrState('error');
     }
   };
@@ -222,9 +231,9 @@ export default function NewMedication() {
             onMouseLeave={e => e.currentTarget.style.background = '#f8fffe'}
           >
             <Camera size={40} color="#1D9E75" style={{ marginBottom: '12px' }} />
-            <div style={{ fontSize: '16px', fontWeight: '800', color: '#1a222d', marginBottom: '6px' }}>약봉투 사진을 업로드하세요</div>
-            <div style={{ fontSize: '13px', color: '#888' }}>클릭하여 이미지 선택 · JPG, PNG, HEIC 지원</div>
-            <div style={{ fontSize: '12px', color: '#aaa', marginTop: '8px' }}>약 이름, 복용법이 자동으로 입력됩니다</div>
+            <div style={{ fontSize: '16px', fontWeight: '800', color: '#1a222d', marginBottom: '6px' }}>약봉투 사진 선택하기</div>
+            <div style={{ fontSize: '13px', color: '#888' }}>직접 촬영하거나 앨범에서 선택하세요</div>
+            <div style={{ fontSize: '12px', color: '#aaa', marginTop: '8px' }}>선명한 사진일수록 정확하게 인식됩니다</div>
           </div>
         )}
 
@@ -283,7 +292,7 @@ export default function NewMedication() {
           </div>
         )}
 
-        <input ref={fileInputRef} type="file" accept="image/*" capture="environment" onChange={handleImageUpload} style={{ display: 'none' }} />
+        <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} />
       </div>
 
       {/* 등록 폼 */}
