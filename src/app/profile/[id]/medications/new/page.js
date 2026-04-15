@@ -250,33 +250,54 @@ export default function NewMedication() {
         )}
 
         {ocrState === 'done' && (
-          <div style={{ borderRadius: '16px', overflow: 'hidden', border: '1.5px solid #c8e6da' }}>
-            <div style={{ display: 'flex', gap: '16px', padding: '16px', background: '#f0faf6', borderBottom: '1px solid #c8e6da' }}>
-              {previewUrl && (
-                <img src={previewUrl} alt="약봉투" style={{ width: '80px', height: '80px', borderRadius: '8px', objectFit: 'cover', flexShrink: 0 }} />
-              )}
-              <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '6px' }}>
-                  <CheckCircle size={16} color="#1D9E75" />
-                  <span style={{ fontSize: '14px', fontWeight: '800', color: '#1D9E75' }}>스캔 완료 — 결과가 다르다면 아래 텍스트를 직접 수정해보세요</span>
-                </div>
-                <textarea 
-                  value={ocrText}
-                  onChange={(e) => setOcrText(e.target.value)}
-                  style={{ 
-                    width: '100%', minHeight: '100px', padding: '12px', borderRadius: '12px', 
-                    border: '1.5px solid #c8e6da', fontSize: '13px', color: '#333', 
-                    lineHeight: '1.6', background: '#fff', outline: 'none', resize: 'vertical'
-                  }}
-                />
+          <div style={{ borderRadius: '20px', overflow: 'hidden', border: '1.5px solid #e2e8f0', background: '#fff' }}>
+            {/* 1. 상단: 원본 사진 영역 */}
+            <div style={{ background: '#f8fafc', padding: '16px', borderBottom: '1px solid #e2e8f0' }}>
+              <div style={{ fontSize: '12px', fontWeight: '800', color: '#64748b', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '5px' }}>
+                <Camera size={14} /> 원본 사진 (대조용)
               </div>
+              {previewUrl && (
+                <div style={{ width: '100%', maxHeight: '250px', overflow: 'hidden', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+                  <img src={previewUrl} alt="원본" style={{ width: '100%', height: 'auto', display: 'block' }} />
+                </div>
+              )}
             </div>
-            <div style={{ padding: '12px 16px', background: '#fff', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <button onClick={() => applyParsedResults(ocrText)} style={{ background: '#1D9E75', border: 'none', color: '#fff', borderRadius: '8px', padding: '8px 16px', fontWeight: '800', cursor: 'pointer', fontSize: '13px' }}>
-                 수정된 내용으로 다시 분석
+
+            {/* 2. 하단: 인식된 텍스트 편집 영역 */}
+            <div style={{ padding: '20px', background: '#fff' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '12px' }}>
+                <CheckCircle size={18} color="#1D9E75" />
+                <span style={{ fontSize: '15px', fontWeight: '800', color: '#1a222d' }}>실시간 인식 데이터</span>
+              </div>
+              <p style={{ fontSize: '13px', color: '#64748b', marginBottom: '12px', lineHeight: '1.5' }}>
+                사진 속 글자와 다른 부분이 있다면 아래 박스에서 직접 수정해 주세요.
+              </p>
+              <textarea 
+                value={ocrText}
+                onChange={(e) => setOcrText(e.target.value)}
+                style={{ 
+                  width: '100%', minHeight: '120px', padding: '16px', borderRadius: '16px', 
+                  border: '1.5px solid #1D9E75', fontSize: '14px', color: '#1a222d', 
+                  lineHeight: '1.6', background: '#f8fffe', outline: 'none', resize: 'vertical',
+                  boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.02)'
+                }}
+              />
+            </div>
+
+            {/* 3. 액션 버튼 영역 */}
+            <div style={{ padding: '16px 20px', background: '#f8fafc', borderTop: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <button 
+                onClick={() => applyParsedResults(ocrText)} 
+                style={{ 
+                  background: '#1D9E75', border: 'none', color: '#fff', borderRadius: '10px', 
+                  padding: '12px 20px', fontWeight: '800', cursor: 'pointer', fontSize: '14px',
+                  boxShadow: '0 4px 10px rgba(29, 158, 117, 0.2)'
+                }}
+              >
+                 수정 내용으로 폼 자동입력
               </button>
-              <button onClick={resetOcr} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: '1px solid #ddd', borderRadius: '8px', padding: '8px 14px', cursor: 'pointer', fontSize: '13px', color: '#666' }}>
-                <X size={14} /> 새로 스캔
+              <button onClick={resetOcr} style={{ display: 'flex', alignItems: 'center', gap: '6px', background: 'none', border: '1px solid #cbd5e1', borderRadius: '10px', padding: '11px 16px', cursor: 'pointer', fontSize: '14px', color: '#64748b', fontWeight: '700' }}>
+                <X size={16} /> 새로 스캔
               </button>
             </div>
           </div>
