@@ -1,4 +1,4 @@
-﻿:root {
+:root {
   --color-background-primary: #ffffff;
   --color-background-secondary: #f8f9fa;
   --color-background-success: #e1f5ee;
@@ -41,4 +41,40 @@ body {
   background: var(--color-background-primary);
   min-height: 100vh;
   padding: 1.5rem;
+}
+
+/* Responsive Utilities */
+@media (max-width: 768px) {
+  .desktop-only {
+    display: none !important;
+  }
+  
+  .mobile-font-sm {
+    font-size: 14px !important;
+  }
+  
+  .mobile-padding-x {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+  
+  .mobile-stack {
+    flex-direction: column !important;
+    width: 100% !important;
+  }
+  
+  .mobile-full-width {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
 }
