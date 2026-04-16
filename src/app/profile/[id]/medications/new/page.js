@@ -17,47 +17,61 @@ function parseMedicationText(text) {
     symptom_tag: '',
   };
 
+  if (!text) return result;
+
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
   const fullText = text.toLowerCase();
 
-  // 약 이름 추출 (한글 약품명 패턴)
+  // 1. 약 이름 추출 (더 유연하게)
   for (const line of lines) {
-    // 일반적인 약품명 패턴: 한글+숫자+mg/정/캡슐
-    const drugMatch = line.match(/([가-힣a-zA-Z]+(?:\s*\d+\s*)?(?:mg|정|캡슐|ml|g|Tab|Cap)?)/i);
-    if (drugMatch && line.length < 40 && !line.includes('병원') && !line.includes('약국') && !line.includes('환자')) {
-      if (!result.drug_name && drugMatch[1].length > 1) {
-        result.drug_name = drugMatch[1].trim();
-      }
+    // 이미 약 이름이 찾아졌으면 스킵
+    if (result.drug_name) break;
+    
+    // 불필요한 단어가 포함된 라인은 스킵
+    if (/병원|약국|환자|성명|일자|주소|전화|처방/.test(line)) continue;
+
+    // 패턴 1: 한글/영문 + 단위(mg, 정...)
+    const drugMatch = line.match(/^([가-힣a-zA-Z\s0-9]+(?:\d+(?:mg|정|캡슐|ml|g|Tab|Cap)))/i);
+    if (drugMatch) {
+      result.drug_name = drugMatch[1].trim();
+      continue;
+    }
+
+    // 패턴 2: 단어 하나만 있는 경우 (보통 약 이름)
+    const words = line.split(/\s+/);
+    if (words.length === 1 && line.length >= 2 && line.length <= 15 && /^[가-힣a-zA-Z]+$/.test(line)) {
+      result.drug_name = line;
     }
   }
 
-  // 용량 추출
-  const dosageMatch = text.match(/(\d+\s*mg|\d+\s*ml|\d+\s*g|\d+정|\d+캡슐)/i);
+  // 2. 용량 추출 (다양한 단위 추가)
+  const dosageMatch = text.match(/(\d+\s*(?:mg|ml|g|정|캡슐|알|ea|tab|cap))/i);
   if (dosageMatch) result.dosage = dosageMatch[1];
 
-  // 복용 시간 파싱
-  if (/아침|조식|오전/.test(fullText)) result.morning = true;
-  if (/점심|중식|오후/.test(fullText)) result.afternoon = true;
-  if (/저녁|석식/.test(fullText)) result.evening = true;
-  if (/취침|자기전|잠들기/.test(fullText)) result.bedtime = true;
+  // 3. 복용 시간 파싱 (키워드 확장)
+  if (/아침|조식|오전|상(?!태)|매일\s*아침/.test(fullText)) result.morning = true;
+  if (/점심|중식|오후|중(?!앙)/.test(fullText)) result.afternoon = true;
+  if (/저녁|석식|하(?!루)/.test(fullText)) result.evening = true;
+  if (/취침|자기전|잠들기|취(?!수)/.test(fullText)) result.bedtime = true;
 
-  // 복용 횟수로 시간 추정 (발견된 시간이 없을 때)
-  if (!result.morning && !result.afternoon && !result.evening) {
-    if (/1일\s*3회|하루\s*3번/.test(fullText)) {
-      result.morning = true;
-      result.afternoon = true;
-      result.evening = true;
-    } else if (/1일\s*2회|하루\s*2번/.test(fullText)) {
-      result.morning = true;
-      result.evening = true;
-    } else if (/1일\s*1회|하루\s*1번/.test(fullText)) {
+  // 4. 복용 횟수로 시간 추정
+  const timeChecked = result.morning || result.afternoon || result.evening || result.bedtime;
+  if (!timeChecked) {
+    if (/1일\s*3회|하루\s*3번|3x1|t\.i\.d/i.test(fullText)) {
+      result.morning = true; result.afternoon = true; result.evening = true;
+    } else if (/1일\s*2회|하루\s*2번|2x1|b\.i\.d/i.test(fullText)) {
+      result.morning = true; result.evening = true;
+    } else if (/1일\s*1회|하루\s*1번|1x1|q\.d/i.test(fullText)) {
       result.morning = true;
     }
   }
 
-  // 주의사항
-  const cautionMatch = text.match(/주의[사항]*[:\s](.+)/);
+  // 5. 주의사항 및 태그
+  const cautionMatch = text.match(/(?:주의|메모|참고)[:\s]*(.+)/);
   if (cautionMatch) result.caution_memo = cautionMatch[1].trim();
+  
+  const symptomMatch = text.match(/(?:증상|목적)[:\s]*(.+)/);
+  if (symptomMatch) result.symptom_tag = symptomMatch[1].trim();
 
   return result;
 }
@@ -137,18 +151,39 @@ export default function NewMedication() {
 
   // 분석 결과 적용 로직 (재사용 가능하게 분리)
   const applyParsedResults = (text) => {
+    if (!text) {
+      alert("분석할 텍스트가 없습니다.");
+      return;
+    }
+
     const parsed = parseMedicationText(text);
+    
+    // 변경된 항목이 있는지 확인 (사용자 피드백용)
+    const updates = {};
+    if (parsed.drug_name) updates.drug_name = parsed.drug_name;
+    if (parsed.dosage) updates.dosage = parsed.dosage;
+    if (parsed.caution_memo) updates.caution_memo = parsed.caution_memo;
+    if (parsed.symptom_tag) updates.symptom_tag = parsed.symptom_tag;
+
     setFormData(prev => ({
       ...prev,
-      drug_name: parsed.drug_name || prev.drug_name,
-      dosage: parsed.dosage || prev.dosage,
+      ...updates,
       morning: parsed.morning,
       afternoon: parsed.afternoon,
       evening: parsed.evening,
       bedtime: parsed.bedtime,
-      caution_memo: parsed.caution_memo || prev.caution_memo,
-      symptom_tag: parsed.symptom_tag || prev.symptom_tag,
     }));
+
+    // 살짝 알림 표시
+    const activeTimes = [
+      parsed.morning && '아침', 
+      parsed.afternoon && '점심', 
+      parsed.evening && '저녁', 
+      parsed.bedtime && '취침전'
+    ].filter(Boolean).join(', ');
+
+    console.log('Parsed and Applied:', { ...updates, times: activeTimes });
+    alert("텍스트 분석 결과가 입력되었습니다.");
   };
 
   const resetOcr = () => {
@@ -160,6 +195,12 @@ export default function NewMedication() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    if (!formData.drug_name) {
+      alert('약 이름을 입력해 주세요.');
+      return;
+    }
+
     setLoading(true);
     
     // 인식된 텍스트가 있다면 메모에 기록으로 남김
@@ -167,17 +208,33 @@ export default function NewMedication() {
       ? `[OCR 인식 기록]: ${ocrText.substring(0, 100)}${ocrText.length > 100 ? '...' : ''}\n${formData.caution_memo}`
       : formData.caution_memo;
 
+    // 데이터 타입 정제
     const submissionData = { 
       ...formData, 
       caution_memo: finalMemo,
-      profile_id: profileId 
+      profile_id: profileId,
+      // 숫자로 변환 (빈 문자열이면 null)
+      cost: formData.cost === '' ? null : parseInt(formData.cost, 10),
+      // 빈 문자열인 hospital_id는 null로 처리
+      hospital_id: formData.hospital_id === '' ? null : formData.hospital_id
     };
     
-    if (formData.purchase_type !== 'hospital') delete submissionData.hospital_id;
-    const { error } = await supabase.from('medications').insert([submissionData]);
-    if (error) alert('저장 실패: ' + error.message);
-    else router.push(`/profile/${profileId}/medications`);
-    setLoading(false);
+    // 병원 처방이 아니거나 병원이 선택되지 않은 경우 hospital_id 제거/null
+    if (formData.purchase_type !== 'hospital') {
+      submissionData.hospital_id = null;
+    }
+
+    try {
+      const { error } = await supabase.from('medications').insert([submissionData]);
+      if (error) throw error;
+      
+      router.push(`/profile/${profileId}/medications`);
+    } catch (err) {
+      console.error('Save Error:', err);
+      alert('저장 실패: ' + (err.message || '알 수 없는 오류가 발생했습니다.'));
+    } finally {
+      setLoading(false);
+    }
   };
 
   const inputStyle = {
@@ -347,13 +404,38 @@ export default function NewMedication() {
 
           <div>
             <label style={labelStyle}>구매 경로</label>
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <div style={{ display: 'flex', gap: '12px', marginBottom: '12px' }}>
               {[{ id: 'hospital', label: '병원 처방' }, { id: 'pharmacy', label: '약국 구매' }, { id: 'online', label: '온라인 구매' }].map(v => (
                 <button key={v.id} type="button" onClick={() => setFormData({ ...formData, purchase_type: v.id })} style={{ flex: 1, padding: '14px', borderRadius: '10px', border: '1px solid #ddd', background: formData.purchase_type === v.id ? '#1a222d' : '#fff', color: formData.purchase_type === v.id ? '#fff' : '#666', fontWeight: 'bold', cursor: 'pointer' }}>
                   {v.label}
                 </button>
               ))}
             </div>
+            
+            {formData.purchase_type === 'hospital' && (
+              <div style={{ marginTop: '12px', padding: '16px', background: '#f8faff', borderRadius: '12px', border: '1px solid #eef3ff' }}>
+                <label style={{ ...labelStyle, fontSize: '13px', color: '#378ADD' }}>연결할 병원 선택</label>
+                {hospitals.length > 0 ? (
+                  <select 
+                    style={inputStyle} 
+                    value={formData.hospital_id} 
+                    onChange={(e) => setFormData({ ...formData, hospital_id: e.target.value })}
+                  >
+                    <option value="">병원을 선택해 주세요 (선택 사항)</option>
+                    {hospitals.map(h => (
+                      <option key={h.id} value={h.id}>{h.hospital_name}</option>
+                    ))}
+                  </select>
+                ) : (
+                  <div style={{ fontSize: '13px', color: '#666' }}>
+                    등록된 병원이 없습니다. <br/>
+                    <button type="button" onClick={() => router.push(`/profile/${profileId}/hospitals/new`)} style={{ color: '#378ADD', background: 'none', border: 'none', padding: 0, fontWeight: '700', cursor: 'pointer', marginTop: '5px' }}>
+                      + 병원 먼저 등록하기
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>

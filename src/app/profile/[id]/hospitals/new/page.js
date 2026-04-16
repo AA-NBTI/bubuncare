@@ -35,9 +35,16 @@ export default function NewHospital() {
     e.preventDefault();
     setLoading(true);
 
+    const submissionData = {
+      ...formData,
+      profile_id: profileId,
+      // 숫자로 변환 (빈 문자열이면 null)
+      visit_cost: formData.visit_cost === '' ? null : parseInt(formData.visit_cost, 10),
+    };
+
     const { error } = await supabase
       .from('hospital_cards')
-      .insert([{ ...formData, profile_id: profileId }]);
+      .insert([submissionData]);
 
     if (error) {
       alert('저장 실패: ' + error.message);
