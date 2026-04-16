@@ -22,25 +22,45 @@ function parseMedicationText(text) {
   const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
   const fullText = text.toLowerCase();
 
-  // 1. 약 이름 추출 (더 유연하게)
+  // 1. 약 이름 추출 (한국 약봉투 전용 로직 강화)
+  const drugKeywords = ['약품명', '제품명', '처방의약품', '약　명', '처방약'];
+  
   for (const line of lines) {
-    // 이미 약 이름이 찾아졌으면 스킵
     if (result.drug_name) break;
     
-    // 불필요한 단어가 포함된 라인은 스킵
-    if (/병원|약국|환자|성명|일자|주소|전화|처방/.test(line)) continue;
+    // 키워드 기반 추출 (예: "약품명: 타이레놀 500mg")
+    for (const kw of drugKeywords) {
+      if (line.includes(kw)) {
+        const cleaned = line.split(kw)[1].replace(/[:：\s]/g, '').trim();
+        // 단위가 포함된 패턴으로 다시 매칭
+        const match = cleaned.match(/^([가-힣a-zA-Z0-9\s]+(?:\d+(?:mg|정|캡슐|ml|g|Tab|Cap|알)))/i);
+        if (match) {
+          result.drug_name = match[1];
+        } else if (cleaned.length >= 2 && cleaned.length <= 15) {
+          result.drug_name = cleaned;
+        }
+        break;
+      }
+    }
 
-    // 패턴 1: 한글/영문 + 단위(mg, 정...)
-    const drugMatch = line.match(/^([가-힣a-zA-Z\s0-9]+(?:\d+(?:mg|정|캡슐|ml|g|Tab|Cap)))/i);
+    if (result.drug_name) break;
+
+    // 불필요한 라인 스킵
+    if (/병원|약국|환자|성명|일자|주소|전화|처방|복용|횟수|보험|금액/.test(line)) continue;
+
+    // 패턴 1: 한글/영문 + 단위(mg, 정, 알...)
+    const drugMatch = line.match(/^([가-힣a-zA-Z\s0-9]+(?:\d+(?:mg|정|캡슐|ml|g|Tab|Cap|알|캡)))/i);
     if (drugMatch) {
       result.drug_name = drugMatch[1].trim();
       continue;
     }
 
-    // 패턴 2: 단어 하나만 있는 경우 (보통 약 이름)
-    const words = line.split(/\s+/);
-    if (words.length === 1 && line.length >= 2 && line.length <= 15 && /^[가-힣a-zA-Z]+$/.test(line)) {
-      result.drug_name = line;
+    // 패턴 2: 특정 단어 형태 (2-12자 한글/영문)
+    if (line.length >= 2 && line.length <= 12 && /^[가-힣a-zA-Z0-9\s]+$/.test(line)) {
+      // 숫자가 너무 많으면 제외
+      if ((line.match(/\d/g) || []).length < 5) {
+        result.drug_name = line;
+      }
     }
   }
 
@@ -150,20 +170,9 @@ export default function NewMedication() {
   };
 
   // 분석 결과 적용 로직 (재사용 가능하게 분리)
-  const applyParsedResults = (text) => {
-    if (!text) {
-      alert("분석할 텍스트가 없습니다.");
-      return;
+    if (!parsed.drug_name) {
+       console.log('Name not found in OCR, keeping previous or empty');
     }
-
-    const parsed = parseMedicationText(text);
-    
-    // 변경된 항목이 있는지 확인 (사용자 피드백용)
-    const updates = {};
-    if (parsed.drug_name) updates.drug_name = parsed.drug_name;
-    if (parsed.dosage) updates.dosage = parsed.dosage;
-    if (parsed.caution_memo) updates.caution_memo = parsed.caution_memo;
-    if (parsed.symptom_tag) updates.symptom_tag = parsed.symptom_tag;
 
     setFormData(prev => ({
       ...prev,
@@ -175,15 +184,11 @@ export default function NewMedication() {
     }));
 
     // 살짝 알림 표시
-    const activeTimes = [
-      parsed.morning && '아침', 
-      parsed.afternoon && '점심', 
-      parsed.evening && '저녁', 
-      parsed.bedtime && '취침전'
-    ].filter(Boolean).join(', ');
-
-    console.log('Parsed and Applied:', { ...updates, times: activeTimes });
-    alert("텍스트 분석 결과가 입력되었습니다.");
+    if (!parsed.drug_name) {
+      alert("약 이름을 찾지 못했습니다. 수동으로 입력해 주세요.");
+    } else {
+      alert(`복약 정보 분석 완료: ${parsed.drug_name}`);
+    }
   };
 
   const resetOcr = () => {
@@ -209,12 +214,13 @@ export default function NewMedication() {
       : formData.caution_memo;
 
     // 데이터 타입 정제
+    const cleanCost = String(formData.cost).replace(/,/g, '');
     const submissionData = { 
       ...formData, 
       caution_memo: finalMemo,
       profile_id: profileId,
       // 숫자로 변환 (빈 문자열이면 null)
-      cost: formData.cost === '' ? null : parseInt(formData.cost, 10),
+      cost: cleanCost === '' ? null : parseInt(cleanCost, 10),
       // 빈 문자열인 hospital_id는 null로 처리
       hospital_id: formData.hospital_id === '' ? null : formData.hospital_id
     };
@@ -225,9 +231,15 @@ export default function NewMedication() {
     }
 
     try {
-      const { error } = await supabase.from('medications').insert([submissionData]);
-      if (error) throw error;
+      console.log('Submitting Data:', submissionData);
+      const { data, error } = await supabase.from('medications').insert([submissionData]).select();
       
+      if (error) {
+        console.error('Supabase Insert Error Detail:', error);
+        throw new Error(error.message || '데이터베이스 저장 실패');
+      }
+      
+      console.log('Insert Success:', data);
       router.push(`/profile/${profileId}/medications`);
     } catch (err) {
       console.error('Save Error:', err);
