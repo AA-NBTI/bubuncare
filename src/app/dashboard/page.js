@@ -165,7 +165,20 @@ export default function DashboardHome() {
                         <div style={{ fontSize: '11px', color: '#888', fontWeight: 'bold', marginBottom: '8px' }}>처방 약물 {hMeds.length}종</div>
                         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
                           {hMeds.map(m => (
-                            <span key={m.id} style={{ background: '#f1f5f9', padding: '6px 10px', borderRadius: '8px', fontSize: '12px', fontWeight: '700', color: '#1a222d' }}>{m.drug_name}</span>
+                            <span 
+                              key={m.id} 
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                router.push(`/profile/${profile.id}/medications/${m.id}`);
+                              }}
+                              style={{ 
+                                background: '#f1f5f9', padding: '6px 12px', borderRadius: '10px', 
+                                fontSize: '12px', fontWeight: '700', color: '#1a222d',
+                                cursor: 'pointer', border: '1px solid #e2e8f0'
+                              }}
+                            >
+                              {m.drug_name}
+                            </span>
                           ))}
                         </div>
                       </div>
@@ -188,7 +201,17 @@ export default function DashboardHome() {
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxHeight: '60vh', overflowY: 'auto' }}>
               {selectedTime.list.map(m => (
-                <div key={m.id} style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', background: '#f8fafc', borderRadius: '16px' }}>
+                <div 
+                  key={m.id} 
+                  onClick={() => router.push(`/profile/${profile.id}/medications/${m.id}`)}
+                  style={{ 
+                    display: 'flex', alignItems: 'center', gap: '12px', padding: '16px', 
+                    background: '#f8fafc', borderRadius: '16px', cursor: 'pointer',
+                    border: '1px solid transparent', transition: 'border-color 0.2s'
+                  }}
+                  onMouseEnter={e => e.currentTarget.style.borderColor = selectedTime.color}
+                  onMouseLeave={e => e.currentTarget.style.borderColor = 'transparent'}
+                >
                   <Pill size={20} color={selectedTime.color} />
                   <div>
                     <div style={{ fontSize: '15px', fontWeight: '900' }}>{m.drug_name}</div>

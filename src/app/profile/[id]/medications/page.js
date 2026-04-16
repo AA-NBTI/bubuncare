@@ -100,7 +100,18 @@ export default function MedicationList() {
                 {group.meds.map(med => {
                   const isConflict = conflicts.includes(med.id);
                   return (
-                    <div key={med.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', background: isConflict ? '#fff1f0' : '#f8fafc', borderRadius: '16px', border: isConflict ? '1px solid #ffccc7' : '1px solid transparent' }}>
+                    <div 
+                      key={med.id} 
+                      onClick={() => router.push(`/profile/${profileId}/medications/${med.id}`)}
+                      style={{ 
+                        display: 'flex', justifyContent: 'space-between', alignItems: 'center', 
+                        padding: '16px', background: isConflict ? '#fff1f0' : '#f8fafc', 
+                        borderRadius: '16px', border: isConflict ? '1.5px solid #ffccc7' : '1px solid transparent',
+                        cursor: 'pointer', transition: 'transform 0.1s',
+                      }}
+                      onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.02)'}
+                      onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                    >
                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <Pill size={20} color={isConflict ? '#ff4d4f' : '#378ADD'} />
                         <div>
@@ -108,7 +119,7 @@ export default function MedicationList() {
                           <div style={{ fontSize: '11px', color: '#888', fontWeight: 'bold' }}>{med.dosage} · {[med.morning && '아침', med.afternoon && '점심', med.evening && '저녁', med.bedtime && '취침전'].filter(Boolean).join('/')}</div>
                         </div>
                       </div>
-                      <button onClick={(e) => handleDelete(med.id, med.drug_name, e)} style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer' }}>
+                      <button onClick={(e) => handleDelete(med.id, med.drug_name, e)} style={{ background: 'none', border: 'none', color: '#ccc', cursor: 'pointer', padding: '10px' }}>
                         <Trash2 size={16} />
                       </button>
                     </div>
